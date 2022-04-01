@@ -5,7 +5,7 @@ const lambdaClient = new aws.Lambda({ apiVersion: '2017-04-19' });
 exports.handler = function(event, context) {
     const lex = new aws.LexModelBuildingService({ apiVersion: '2017-04-19', region: event.ResourceProperties.lexRegion });
     if (event.RequestType == 'Delete') {
-        let botName = "OrderFlowers";
+        let botName = "BookTrip";
         if(process.env.ENV && process.env.ENV !== "NONE") {
             botName = botName + '_' + process.env.ENV;
         }
@@ -17,20 +17,54 @@ exports.handler = function(event, context) {
         
         
         {
-            "name": "FlowerTypes",
-            "description": "Types of flowers to pick up",
+            "name": "CarTypeValues",
+            "description": "Enumeration representing possible types of cars available for rental",
             "enumerationValues": [
                 
                 {
-                    "value": "tulips"
+                    "value": "standard"
                 },
                 
                 {
-                    "value": "lillies"
+                    "value": "full size"
                 },
                 
                 {
-                    "value": "roses"
+                    "value": "midsize"
+                },
+                
+                {
+                    "value": "luxury"
+                },
+                
+                {
+                    "value": "economy"
+                },
+                
+                {
+                    "value": "minivan"
+                },
+                
+            ]
+        },
+        
+        
+        
+        {
+            "name": "RoomTypeValues",
+            "description": "Enumeration representing possible types of a hotel room",
+            "enumerationValues": [
+                
+                {
+                    "value": "deluxe"
+                },
+                
+                {
+                    "value": "queen"
+                },
+                
+                {
+                    "value": "king"
                 },
                 
             ]
@@ -41,13 +75,13 @@ exports.handler = function(event, context) {
     let intentParams = [
         
         {
-            "name": "OrderFlowers" + "_" + process.env.ENV,
+            "name": "BookCar" + "_" + process.env.ENV,
             
             "confirmationPrompt": {
                 "maxAttempts": 2,
                 "messages": [
                     {
-                        "content": "Okay, your {FlowerType} will be ready for pickup by {PickupTime} on {PickupDate}. Does this sound okay?",
+                        "content": "Okay, I have you down for a {CarType} rental in {PickUpCity} from {PickUpDate} to {ReturnDate}. Should I book the reservation?",
                         "contentType": "PlainText"
                     }
                 ]
@@ -57,7 +91,7 @@ exports.handler = function(event, context) {
             "rejectionStatement": {
                 "messages": [
                     {
-                    "content": "Okay, I will not place your order.",
+                    "content": "Okay, I have cancelled your reservation in progress.",
                     "contentType": "PlainText"
                     }
                 ]
@@ -65,9 +99,11 @@ exports.handler = function(event, context) {
         
             "sampleUtterances": [
             
-                "I would like to order some flowers",
+                "Make a car reservation",
             
-                "I would like to pick up flowers",
+                "Reserve a car",
+            
+                "Book a car",
             
             ],
         
@@ -78,16 +114,16 @@ exports.handler = function(event, context) {
             "slots": [
                 
                 {
-                    "name": "FlowerType",
+                    "name": "PickUpCity",
                     "slotConstraint": "Required",
                     "priority": 0,
-                    "slotType": "FlowerTypes",
-                    "slotTypeVersion": "$LATEST",
+                    "slotType": "AMAZON.US_CITY",
+                    
                     "valueElicitationPrompt": {
                         "maxAttempts": 3,
                         "messages": [
                             {
-                                "content": "What type of flowers would you like to order?",
+                                "content": "In what city do you need to rent a car?",
                                 "contentType": "PlainText"
                             }
                         ]
@@ -95,7 +131,7 @@ exports.handler = function(event, context) {
                 },
                 
                 {
-                    "name": "PickupDate",
+                    "name": "PickUpDate",
                     "slotConstraint": "Required",
                     "priority": 1,
                     "slotType": "AMAZON.DATE",
@@ -104,7 +140,7 @@ exports.handler = function(event, context) {
                         "maxAttempts": 3,
                         "messages": [
                             {
-                                "content": "What day do you want the {FlowerType} to be picked up?",
+                                "content": "What day do you want to start your rental?",
                                 "contentType": "PlainText"
                             }
                         ]
@@ -112,16 +148,160 @@ exports.handler = function(event, context) {
                 },
                 
                 {
-                    "name": "PickupTime",
+                    "name": "ReturnDate",
                     "slotConstraint": "Required",
                     "priority": 2,
-                    "slotType": "AMAZON.TIME",
+                    "slotType": "AMAZON.DATE",
                     
                     "valueElicitationPrompt": {
                         "maxAttempts": 3,
                         "messages": [
                             {
-                                "content": "At what time do you want the {FlowerType} to be picked up?",
+                                "content": "What day do you want to return the car?",
+                                "contentType": "PlainText"
+                            }
+                        ]
+                    }
+                },
+                
+                {
+                    "name": "DriverAge",
+                    "slotConstraint": "Required",
+                    "priority": 3,
+                    "slotType": "AMAZON.NUMBER",
+                    
+                    "valueElicitationPrompt": {
+                        "maxAttempts": 3,
+                        "messages": [
+                            {
+                                "content": "How old is the driver for this rental?",
+                                "contentType": "PlainText"
+                            }
+                        ]
+                    }
+                },
+                
+                {
+                    "name": "CarType",
+                    "slotConstraint": "Required",
+                    "priority": 4,
+                    "slotType": "CarTypeValues",
+                    "slotTypeVersion": "$LATEST",
+                    "valueElicitationPrompt": {
+                        "maxAttempts": 3,
+                        "messages": [
+                            {
+                                "content": "What type of car would you like to rent? Our most popular options are economy, midsize, and luxury",
+                                "contentType": "PlainText"
+                            }
+                        ]
+                    }
+                },
+                
+            ]
+        },
+        
+        {
+            "name": "BookHotel" + "_" + process.env.ENV,
+            
+            "confirmationPrompt": {
+                "maxAttempts": 2,
+                "messages": [
+                    {
+                        "content": "Okay, I have you down for a {Nights} night stay in {Location} starting {CheckInDate}. Shall I book the reservation?",
+                        "contentType": "PlainText"
+                    }
+                ]
+            },
+            
+            
+            "rejectionStatement": {
+                "messages": [
+                    {
+                    "content": "Okay, I have cancelled your reservation in progress.",
+                    "contentType": "PlainText"
+                    }
+                ]
+            },
+        
+            "sampleUtterances": [
+            
+                "Book a {Nights} night stay in {Location}",
+            
+                "I want a make hotel reservations",
+            
+                "Book a hotel",
+            
+            ],
+        
+            "fulfillmentActivity": {
+                "type": "ReturnIntent"
+            },
+        
+            "slots": [
+                
+                {
+                    "name": "Location",
+                    "slotConstraint": "Required",
+                    "priority": 0,
+                    "slotType": "AMAZON.US_CITY",
+                    
+                    "valueElicitationPrompt": {
+                        "maxAttempts": 3,
+                        "messages": [
+                            {
+                                "content": "What city will you be staying in?",
+                                "contentType": "PlainText"
+                            }
+                        ]
+                    }
+                },
+                
+                {
+                    "name": "CheckInDate",
+                    "slotConstraint": "Required",
+                    "priority": 1,
+                    "slotType": "AMAZON.DATE",
+                    
+                    "valueElicitationPrompt": {
+                        "maxAttempts": 3,
+                        "messages": [
+                            {
+                                "content": "What day do you want to check in?",
+                                "contentType": "PlainText"
+                            }
+                        ]
+                    }
+                },
+                
+                {
+                    "name": "Nights",
+                    "slotConstraint": "Required",
+                    "priority": 2,
+                    "slotType": "AMAZON.NUMBER",
+                    
+                    "valueElicitationPrompt": {
+                        "maxAttempts": 3,
+                        "messages": [
+                            {
+                                "content": "How many nights will you be staying?",
+                                "contentType": "PlainText"
+                            }
+                        ]
+                    }
+                },
+                
+                {
+                    "name": "RoomType",
+                    "slotConstraint": "Required",
+                    "priority": 3,
+                    "slotType": "RoomTypeValues",
+                    "slotTypeVersion": "$LATEST",
+                    "valueElicitationPrompt": {
+                        "maxAttempts": 3,
+                        "messages": [
+                            {
+                                "content": "What type of room would you like: queen, king or deluxe?",
                                 "contentType": "PlainText"
                             }
                         ]
@@ -132,7 +312,7 @@ exports.handler = function(event, context) {
         },
         
     ];
-    let botName = "OrderFlowers";
+    let botName = "BookTrip";
     if(process.env.ENV && process.env.ENV !== "NONE") {
       botName = botName + '_' + process.env.ENV;
     }
@@ -142,7 +322,12 @@ exports.handler = function(event, context) {
         "intents": [
         
             {
-                "intentName": "OrderFlowers" + "_" + process.env.ENV,
+                "intentName": "BookCar" + "_" + process.env.ENV,
+                "intentVersion": "$LATEST"
+            },
+        
+            {
+                "intentName": "BookHotel" + "_" + process.env.ENV,
                 "intentVersion": "$LATEST"
             },
         
@@ -326,7 +511,7 @@ function ensureLambdaFunctionAccess(intent){
 
         const params = {
             FunctionName: lambdaName,
-            StatementId: `Lex-${intent.name}`+ "2f2fb642",
+            StatementId: `Lex-${intent.name}`+ "d67f5ed2",
             Action: 'lambda:InvokeFunction',
             Principal: 'lex.amazonaws.com',
             SourceArn: `arn:aws:lex:${region}:${accountId}:intent:${intent.name}:*`,

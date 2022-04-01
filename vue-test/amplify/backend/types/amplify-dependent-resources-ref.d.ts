@@ -1,12 +1,12 @@
 export type AmplifyDependentResourcesAttributes = {
     "auth": {
-        "awsamplifychatbot": {
+        "vuetest": {
             "IdentityPoolId": "string",
             "IdentityPoolName": "string"
         }
     },
     "interactions": {
-        "lex1b211f55": {
+        "lex7827157e": {
             "Region": "string",
             "BotName": "string",
             "FunctionArn": "string"

@@ -1,11 +1,27 @@
+//vue
 import { createApp } from 'vue'
 import App from './App.vue'
+//store
 import store from './store'
-// import Amplify, * as AmplifyModules from "aws-amplify";
-// import {AmplifyPlugin} from "aws-amplify-vue";
-// import awsConfig from './aws-exports';
-import AmplifyVue from '@aws-amplify/ui-vue';
+//Prime
+// import PrimeVue from 'primevue/config'
+import 'primevue/resources/themes/lara-dark-teal/theme.css' // theme
+import 'primevue/resources/primevue.min.css' // core css
+import 'primeicons/primeicons.css'
 
-//Amplify.configure(awsConfig);
+//chatbot
+import { applyPolyfills, defineCustomElements} from '@aws-amplify/ui-components/loader';
+import Amplify from "aws-amplify"
+import awsconfig from './aws-exports';
 
-createApp(App).use(store, AmplifyVue).mount('#app')
+Amplify.configure(awsconfig);
+applyPolyfills().then(() => {
+    defineCustomElements(window);
+  });
+
+const app = createApp(App);
+// store use
+app.use( store)
+app.mount('#app');
+app.config.compilerOptions.isCustomElement = tag => tag.startsWith('amplify-');
+//createApp(App).use(store).mount('#app')

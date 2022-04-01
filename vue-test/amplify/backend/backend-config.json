@@ -1,6 +1,6 @@
 {
   "auth": {
-    "awsamplifychatbot": {
+    "vuetest": {
       "service": "Cognito",
       "serviceType": "managed",
       "providerPlugin": "awscloudformation",
@@ -18,7 +18,7 @@
     }
   },
   "interactions": {
-    "lex1b211f55": {
+    "lex7827157e": {
       "service": "Lex",
       "providerPlugin": "awscloudformation",
       "build": true

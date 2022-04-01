@@ -1,40 +1,46 @@
 <template>
-  <div id="app" class="container">
-    <my-cabecera></my-cabecera>
-    <my-lista></my-lista>
-    <amplify-chatbot :chatbotConfig="chatbotConfig" ></amplify-chatbot>
+  <div id="app" >
+    <my-cabecera></my-cabecera><br>
+    <my-lista></my-lista><br>
+    <amplify-chatbot
+      bot-name="BookTrip_dev"
+      bot-title="FaunaDexin"
+      welcome-message="Hello, how can I help you?"
+      clear-on-complete="true"
+    />
   </div>
 </template>
 
 <script>
-import MyCabecera from './components/Cabecera.vue'
 import MyLista from './components/Lista.vue'
-import {Interactions} from 'aws-amplify'
+import MyCabecera from './components/Cabecera.vue'
+
 export default {
-  name: 'App',
-  components: {
-    MyCabecera,
-    MyLista
+  name: 'App', 
+  components:{
+    MyLista,
+    MyCabecera
   },
-  data: () =>({
-    chatbotConfig:{
-      bot: "diligent-dev-chatbot",
-      clearComplete: false
-    }
-  }),
-  mounted(){
-    Interactions.onComplete("diligent-dev-chatbot", this.handleComplete)
+  mounted() {
+      const chatbotElement = this.$el.querySelector("amplify-chatbot");
+      chatbotElement.addEventListener("chatCompleted", this.handleChatComplete);
+  },
+  beforeUnmount() {
+    const chatbotElement = this.$el.querySelector("amplify-chatbot");
+    chatbotElement.removeEventListener("chatCompleted", this.handleChatComplete);
   },
   methods: {
-    handleComplete(err, confirmation){
+    handleChatComplete(event){
+      const { data, err } = event.detail
       if (err){
         alert(err)
         return
       }
-      alert(JSON.stringify(confirmation))
+      alert('It Works! '+ JSON.stringify(data))
     }
   }
-}
+
+};
 </script>
 
 <style>

@@ -1,11 +1,11 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "awsamplifychatbot_identitypool_d2e513fa",
+    "identityPoolName": "vuetest_identitypool_0f21ed9b",
     "allowUnauthenticatedIdentities": true,
     "authSelections": "identityPoolOnly",
-    "resourceName": "awsamplifychatbot",
-    "sharedId": "d2e513fa",
+    "resourceName": "vuetest",
+    "sharedId": "0f21ed9b",
     "serviceName": "Cognito",
     "useDefault": "manual"
   }
