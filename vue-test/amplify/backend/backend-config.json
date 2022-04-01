@@ -1,0 +1,27 @@
+{
+  "auth": {
+    "awsamplifychatbot": {
+      "service": "Cognito",
+      "serviceType": "managed",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "signupAttributes": [],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": []
+        },
+        "mfaTypes": [],
+        "verificationMechanisms": []
+      }
+    }
+  },
+  "interactions": {
+    "lex1b211f55": {
+      "service": "Lex",
+      "providerPlugin": "awscloudformation",
+      "build": true
+    }
+  }
+}
