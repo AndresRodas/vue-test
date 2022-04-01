@@ -1,44 +1,24 @@
 <template>
   <div id="app" >
     <my-cabecera></my-cabecera><br>
-    <my-lista></my-lista><br>
-    <amplify-chatbot
-      bot-name="BookTrip_dev"
-      bot-title="FaunaDexin"
-      welcome-message="Hello, how can I help you?"
-      clear-on-complete="true"
-    />
+    <my-lista></my-lista><br> 
+    <chat-bot></chat-bot>
   </div>
 </template>
 
 <script>
 import MyLista from './components/Lista.vue'
 import MyCabecera from './components/Cabecera.vue'
+import ChatBot from './components/Chat.vue'
 
 export default {
   name: 'App', 
   components:{
     MyLista,
-    MyCabecera
-  },
-  mounted() {
-      const chatbotElement = this.$el.querySelector("amplify-chatbot");
-      chatbotElement.addEventListener("chatCompleted", this.handleChatComplete);
-  },
-  beforeUnmount() {
-    const chatbotElement = this.$el.querySelector("amplify-chatbot");
-    chatbotElement.removeEventListener("chatCompleted", this.handleChatComplete);
-  },
-  methods: {
-    handleChatComplete(event){
-      const { data, err } = event.detail
-      if (err){
-        alert(err)
-        return
-      }
-      alert('It Works! '+ JSON.stringify(data))
-    }
+    MyCabecera,
+    ChatBot
   }
+  
 
 };
 </script>
